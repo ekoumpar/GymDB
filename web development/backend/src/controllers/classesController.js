@@ -1,0 +1,11 @@
+const classesService = require('../services/classesService');
+const { ok } = require('../utils/responses');
+
+async function getClasses(req, res, next){
+  try{
+    const rows = await classesService.getClasses();
+    return ok(res, { classes: rows });
+  }catch(err){ next(err); }
+}
+
+module.exports = { getClasses };

@@ -1,0 +1,24 @@
+node_modules/
+npm-debug.log*
+.env
+.env.local
+.env.*.local
+.DS_Store
+/.pnp
+.pnp.js
+.cache
+dist/
+build/
+coverage/
+logs/
+*.sqlite
+/.vscode/
+.idea/
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Ignore local frontend build (if present)
+/frontend/node_modules/
+/frontend/build/
