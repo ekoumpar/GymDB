@@ -7,7 +7,7 @@ Setup (MySQL example):
 1. Import SQL dump into MySQL:
 
 ```bash
-mysql -u root -p gymdb < ../gymDBDump.sql
+mysql -u root -p gymdb < ../gymDB_dump.sql
 ```
 
 2. Install dependencies and run server:
