@@ -5,10 +5,9 @@ async function getSchedule(){
   if (process.env.USE_MOCK === '1'){
     return mock.schedule;
   }
-  // Best-effort: try to build schedule from classes table grouped by day/time
+  // Query the timetable view which has schedule data
   try{
-    const [rows] = await pool.query('SELECT id, name, trainer, time, day, location FROM `classes`');
-    // If classes table doesn't include day/time fields, return raw rows
+    const [rows] = await pool.query('SELECT workout_type as name, trainer_name as trainer, time, day FROM `timetable`');
     return rows;
   }catch(err){
     return [];

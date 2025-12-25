@@ -29,7 +29,6 @@ export default function Navbar({ user, onLogout }){
           <Link to="/contact" className="nav-link" title="Contact">Contact</Link>
           {user ? (
             <>
-              <span className="muted">Hi, {user.name}</span>
               <Link to="/profile" className="nav-link" title="Profile">Profile</Link>
               <button className="link-btn" onClick={onLogout}>Logout</button>
             </>

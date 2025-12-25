@@ -5,7 +5,7 @@ async function getMembers(limit = 200){
   if(process.env.USE_MOCK === '1'){
     return mock.members.slice(0, limit);
   }
-  const [rows] = await pool.query('SELECT * FROM `members` LIMIT ?', [limit]);
+  const [rows] = await pool.query('SELECT * FROM `member` LIMIT ?', [limit]);
   return rows;
 }
 

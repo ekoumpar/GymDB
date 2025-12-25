@@ -58,10 +58,18 @@ export async function login(identifier, password){
   }
 }
 
-export async function signup(name, password){
+export async function signup(name, password, details = {}){
   try{
-    // backend register expects `username` and `password`
-    const res = await api.post('/auth/register', { username: name, password });
+    // backend register expects `username`, `password`, and member details
+    const res = await api.post('/auth/register', { 
+      username: name, 
+      password,
+      dateOfBirth: details.dateOfBirth || '',
+      sex: details.sex || 'M',
+      phoneNumber: details.phoneNumber || '',
+      height: details.height || 0,
+      weight: details.weight || 0
+    });
     return res.data; // expected { token, user }
   }catch(e){
     throw e;

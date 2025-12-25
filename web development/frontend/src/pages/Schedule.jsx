@@ -30,12 +30,11 @@ export default function Schedule(){
         <div className="grid">
           {loading && <p className="muted">Loading schedule…</p>}
           {!loading && schedule.length===0 && <p className="muted">No schedule available.</p>}
-          {!loading && schedule.map(s=> (
-            <div className="card" key={s.day}>
-              <h3>{s.day}</h3>
-              <ul>
-                {Array.isArray(s.items) && s.items.map(it=> <li key={`${s.day}-${it.time}`}>{it.time} — {it.name}</li>)}
-              </ul>
+          {!loading && schedule.map((s, idx)=> (
+            <div className="card" key={idx}>
+              <h3>{s.time} - {s.name}</h3>
+              <p><strong>Trainer:</strong> {s.trainer}</p>
+              <p><strong>Day:</strong> {s.day}</p>
             </div>
           ))}
         </div>
