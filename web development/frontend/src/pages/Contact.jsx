@@ -7,7 +7,7 @@ export default function Contact(){
         <div className="section-header"><h2>Contact Us</h2></div>
         <div className="card">
           <h3>Contact</h3>
-          <p className="muted">Phone: <a href="tel:+1234567890">+1 (234) 567-890</a><br/>
+          <p className="muted">Phone: <a href="tel:+302310567890">+30 2310567890</a><br/>
           Email: <a href="mailto:info@gymdb.example">info@gymdb.example</a></p>
 
           <h3>Opening Hours</h3>

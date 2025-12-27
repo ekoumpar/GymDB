@@ -3,20 +3,21 @@ const mock = require('../utils/mockData');
 
 async function getClasses(limit = 200){
   if(process.env.USE_MOCK === '1'){
-    return mock.classes.slice(0, limit);
+    // Return name, duration and intensity from mock data
+    return mock.classes.slice(0, limit).map(c => ({
+      name: c.name,
+      duration: c.duration,
+      intensity: c.intensity !== undefined ? c.intensity : null
+    }));
   }
-  // Prefer the `timetable` view if present (maps to class-like items)
   try{
-    const [trows] = await pool.query("SELECT DISTINCT CONCAT(workout_type,'-',COALESCE(trainer_id,0)) AS id, workout_type AS name, trainer_name AS trainer, time, NULL AS duration, day FROM `timetable` LIMIT ?", [limit]);
-    if(trows && trows.length) return trows.map(r => ({ id: r.id?.toString(), name: r.name, trainer: r.trainer, time: r.time, duration: r.duration, day: r.day }));
-  }catch(_){}
-
-  // Fallback to a `classes` table if it exists
-  try{
-    const [rows] = await pool.query('SELECT id, name, trainer, time, duration FROM `classes` LIMIT ?', [limit]);
-    return rows;
+    // Select name, duration and intensity from workout table
+    const [rows] = await pool.query(
+      'SELECT workout_type AS name, duration, intensity FROM `workout` LIMIT ?',
+      [limit]
+    );
+    return rows.map(r => ({ name: r.name, duration: r.duration, intensity: r.intensity }));
   }catch(err){
-    // final fallback: return empty list rather than throwing
     return [];
   }
 }

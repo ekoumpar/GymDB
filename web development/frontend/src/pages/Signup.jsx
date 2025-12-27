@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import CustomSelect from '../components/CustomSelect';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../api/api';
 
@@ -12,7 +13,7 @@ function validatePassword(p){
 export default function Signup({ onLogin }){
   const [name, setName] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [sex, setSex] = useState('M');
+  const [sex, setSex] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
@@ -26,9 +27,9 @@ export default function Signup({ onLogin }){
     setError(null);
     const pErr = validatePassword(password);
     setPassError(pErr);
-    if(!name || !password || !dateOfBirth || !phoneNumber){ 
-      setError('All required fields must be completed'); 
-      return; 
+    if(!name || !password || !dateOfBirth || !phoneNumber){
+      setError('All required fields must be completed');
+      return;
     }
     if(pErr) return;
     try{
@@ -48,38 +49,40 @@ export default function Signup({ onLogin }){
         <label>Full Name *
           <input type="text" value={name} onChange={e=>setName(e.target.value)} required />
         </label>
-        
+
         <label>Date of Birth *
           <input type="date" value={dateOfBirth} onChange={e=>setDateOfBirth(e.target.value)} required />
         </label>
-        
+
         <label>Sex *
-          <select value={sex} onChange={e=>setSex(e.target.value)} required>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-            <option value="O">Other</option>
-          </select>
+          <CustomSelect
+            value={sex}
+            onChange={v=>setSex(v)}
+            options={[{value:'M',label:'Male'},{value:'F',label:'Female'},{value:'O',label:'Other'}]}
+            placeholder="Select"
+            ariaLabel="Sex"
+          />
         </label>
-        
+
         <label>Phone Number *
           <input type="tel" value={phoneNumber} onChange={e=>setPhoneNumber(e.target.value)} placeholder="+30 6XXXXXXXXX" required />
         </label>
-        
+
         <label>Height (cm)
           <input type="number" value={height} onChange={e=>setHeight(e.target.value)} placeholder="e.g. 180" />
         </label>
-        
+
         <label>Weight (kg)
           <input type="number" value={weight} onChange={e=>setWeight(e.target.value)} placeholder="e.g. 75" />
         </label>
-        
+
         <label>Password *
           <input type="password" value={password} onChange={e=>setPassword(e.target.value)} required />
         </label>
         {passError && <p className="muted">{passError}</p>}
-        
+
         <button className="btn primary" type="submit">Sign up</button>
-        {error && <p className="muted">{error}</p>}
+        {error && <p className="auth-error">{error}</p>}
       </form>
       </div>
     </section>

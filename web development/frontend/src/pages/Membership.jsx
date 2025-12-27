@@ -30,12 +30,15 @@ export default function Membership(){
           {!loading && plans.length===0 && <p className="muted">No membership plans available.</p>}
           {!loading && plans.map(p=> (
             <div key={p.id || p.name} className="card">
-              <h3>{p.name}</h3>
+              <div className="card-header">
+                <h3>{p.name}</h3>
+                <div className="duration-badge">{p.duration ? `${p.duration} mo` : 'TBA'}</div>
+              </div>
               <p className="price">{p.price}</p>
+              {p.category && <div className="category-badge">{p.category}</div>}
               <ul>
                 {Array.isArray(p.perks) && p.perks.map(perk=> <li key={perk}>{perk}</li>)}
               </ul>
-              <button className="btn primary">Choose</button>
             </div>
           ))}
         </div>

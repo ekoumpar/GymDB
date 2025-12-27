@@ -33,7 +33,7 @@ export default function Login({ onLogin }){
           <input type="password" value={password} onChange={e=>setPassword(e.target.value)} />
         </label>
         <button className="btn primary" type="submit">Login</button>
-        {error && <p className="muted">{error}</p>}
+        {error && <p className="auth-error">{error}</p>}
       </form>
       <p className="muted">Don't have an account? <a href="/signup">Sign up</a></p>
       </div>

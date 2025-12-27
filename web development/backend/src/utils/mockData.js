@@ -1,8 +1,8 @@
 // Simple mock data used when the database is unavailable
 const classes = [
-  { id: 'c1', name: 'Yoga Flow', trainer: 'Alex', time: '08:00', duration: 60 },
-  { id: 'c2', name: 'HIIT Blast', trainer: 'Mia', time: '10:30', duration: 45 },
-  { id: 'c3', name: 'Strength 101', trainer: 'Sam', time: '18:00', duration: 50 }
+  { id: 'c1', name: 'Yoga Flow', trainer: 'Alex', time: '08:00', duration: 60, intensity: 6 },
+  { id: 'c2', name: 'HIIT Blast', trainer: 'Mia', time: '10:30', duration: 45, intensity: 10 },
+  { id: 'c3', name: 'Strength 101', trainer: 'Sam', time: '18:00', duration: 50, intensity: 8 }
 ];
 
 const trainers = [
@@ -36,8 +36,8 @@ const schedule = [
 ];
 
 const memberships = [
-  { id: 'p1', name: 'Basic', price: '$19/mo', perks: ['Access to gym','1 class/week'] },
-  { id: 'p2', name: 'All-inclusive', price: '$49/mo', perks: ['All classes','Personal training discount'] }
+  { id: 'p1', name: 'Basic', price: '€19/mo', perks: ['Access to gym','1 class/week'] },
+  { id: 'p2', name: 'All-inclusive', price: '€49/mo', perks: ['All classes','Personal training discount'] }
 ];
 
 module.exports = { classes, trainers, members, users, bookings, schedule, memberships };
