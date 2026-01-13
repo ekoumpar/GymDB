@@ -1,3 +1,36 @@
+http://localhost:4000/api/trainers
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 CREATE DATABASE  IF NOT EXISTS `gymdb` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `gymdb`;
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)

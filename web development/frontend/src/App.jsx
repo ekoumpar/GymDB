@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Classes from './pages/Classes';
@@ -12,7 +12,12 @@ import Schedule from './pages/Schedule';
 import { setAuthToken } from './api/api';
 import './styles/styles.css';
 
+const ProtectedRoute = ({ element, isAuthenticated }) => {
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
+};
+
 export default function App(){
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
 
@@ -38,6 +43,7 @@ export default function App(){
     localStorage.removeItem('gymdb_token');
     localStorage.removeItem('gymdb_user');
     setAuthToken(null);
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -46,15 +52,15 @@ export default function App(){
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/classes" element={<Classes user={user} />} />
-          <Route path="/membership" element={<Membership />} />
-          <Route path="/trainers" element={<Trainers />} />
-          <Route path="/schedule" element={<Schedule />} />
+          <Route path="/classes" element={<ProtectedRoute element={<Classes user={user} />} isAuthenticated={!!user} />} />
+          <Route path="/membership" element={<ProtectedRoute element={<Membership />} isAuthenticated={!!user} />} />
+          <Route path="/trainers" element={<ProtectedRoute element={<Trainers />} isAuthenticated={!!user} />} />
+          <Route path="/schedule" element={<ProtectedRoute element={<Schedule />} isAuthenticated={!!user} />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth onLogin={handleLogin} />} />
           <Route path="/login" element={<Auth onLogin={handleLogin} />} />
           <Route path="/signup" element={<Auth onLogin={handleLogin} />} />
-          <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" replace />} />
+          <Route path="/profile" element={<ProtectedRoute element={<Profile user={user} />} isAuthenticated={!!user} />} />
         </Routes>
       </main>
       <footer className="footer">© GymDB — Built with ❤️</footer>

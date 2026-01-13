@@ -17,6 +17,7 @@
 .nav-link{display:inline-flex;align-items:center;padding:0.45rem 0.9rem;border-radius:10px;color:var(--muted);text-decoration:none;transition:all 180ms ease}
 .nav-link:hover,.nav-link:focus{background:linear-gradient(90deg, rgba(155,89,255,0.08), rgba(123,59,217,0.04));color:var(--accent);box-shadow:0 6px 20px rgba(123,59,217,0.08);outline:none;border:1px solid rgba(155,89,255,0.08)}
 .nav-link:link,.nav-link:visited{text-decoration:none}
+.nav-link.disabled{opacity:0.5;cursor:not-allowed;pointer-events:none}
 
 /* Ensure the brand link doesn't show an underline in any state */
 .brand:link,.brand:visited{text-decoration:none}

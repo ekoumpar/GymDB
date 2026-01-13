@@ -18,13 +18,13 @@ export default function Navbar({ user, onLogout }){
         </Link>
         <button className="nav-toggle" onClick={()=>setOpen(!open)} aria-label="menu">☰</button>
         <nav className={`nav-links ${open? 'open':''}`}>
-          <Link to="/classes" className="nav-link" title="Classes">Classes</Link>
+          <Link to="/classes" className={`nav-link ${!user ? 'disabled' : ''}`} title="Classes" onClick={(e) => !user && e.preventDefault()}>Classes</Link>
 
-          <Link to="/membership" className="nav-link" title="Membership">Membership</Link>
+          <Link to="/membership" className={`nav-link ${!user ? 'disabled' : ''}`} title="Membership" onClick={(e) => !user && e.preventDefault()}>Membership</Link>
 
-          <Link to="/trainers" className="nav-link" title="Trainers">Trainers</Link>
+          <Link to="/trainers" className={`nav-link ${!user ? 'disabled' : ''}`} title="Trainers" onClick={(e) => !user && e.preventDefault()}>Trainers</Link>
 
-          <Link to="/schedule" className="nav-link" title="Schedule">Schedule</Link>
+          <Link to="/schedule" className={`nav-link ${!user ? 'disabled' : ''}`} title="Schedule" onClick={(e) => !user && e.preventDefault()}>Schedule</Link>
 
           <Link to="/contact" className="nav-link" title="Contact">Contact</Link>
           {user ? (
