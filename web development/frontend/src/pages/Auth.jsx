@@ -41,26 +41,32 @@ export default function Auth({ onLogin }){
       if(pErr) return;
       try{
         const data = await signup(name, password, { dateOfBirth, sex, phoneNumber, height: parseFloat(height) || 0, weight: parseFloat(weight) || 0 });
-        // Store user data in localStorage
-        const userData = {
+        const user = data && data.user ? data.user : { username: name };
+        // Merge server user object with additional details for the client
+        const clientUser = {
+          id: user.id,
+          username: user.username,
           name,
           dateOfBirth,
-          sex,
+          sex: sex || 'M',
           phoneNumber,
           height: parseFloat(height) || 0,
           weight: parseFloat(weight) || 0
         };
-        localStorage.setItem('userData', JSON.stringify(userData));
-        onLogin(data);
+        localStorage.setItem('gymdb_user', JSON.stringify(clientUser));
+        if(data && data.token) localStorage.setItem('gymdb_token', data.token);
+        onLogin({ user: clientUser, token: data && data.token });
         navigate('/profile');
       }catch(err){ setError('Signup failed: ' + (err.message || 'Unknown error')); }
     }else{
       if(!identifier||!password){ setError('Fill both fields'); return; }
       try{
         const data = await login(identifier, password);
-        // Store full user data in localStorage
-        localStorage.setItem('userData', JSON.stringify(data));
-        onLogin(data);
+        const user = data && data.user ? data.user : {};
+        const token = data && data.token ? data.token : null;
+        localStorage.setItem('gymdb_user', JSON.stringify(user));
+        if(token) localStorage.setItem('gymdb_token', token);
+        onLogin({ user, token });
         navigate('/profile');
       }catch(err){ setError('Login failed'); }
     }

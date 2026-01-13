@@ -83,7 +83,8 @@ CREATE TABLE `member` (
   `age` int DEFAULT NULL,
   `password` varchar(255) NOT NULL,
   PRIMARY KEY (`member_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 AUTO_INCREMENT=1001;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,11 +95,11 @@ LOCK TABLES `member` WRITE;
 /*!40000 ALTER TABLE `member` DISABLE KEYS */;
 INSERT INTO `member`
 VALUES
-(32,'Leoudi Dimitra Eleni','2003-04-24','F','+30 6980606077',187,57,22,''),
-(762,'Natalia Anastasia Kousta','2003-10-06','F','+30 6940078799',182,49,22, ''),
-(859,'Kostis Alexandros Papadopoulos','1995-12-15','M','+30 6934567890',178,75,30, ''),
-(957,'Maria Ioanna Vasilaki','1988-07-22','F','+30 6971234567',165,60,35, ''),
-(1000,'Giorgos Nikolaos Sideris','1990-03-30','M','+30 6909876543',180,80,34, '');
+(32,'Leoudi Dimitra Eleni','2003-04-24','F','+30 6980606077',187,57,22,'123456Mil'),
+(762,'Natalia Anastasia Kousta','2003-10-06','F','+30 6940078799',182,49,22,'123456Nat '),
+(859,'Koumparidou Eleni','2003-02-07','F','+30 6940257161',175,60,22,'123456Kou'),
+(957,'Nikos Papas','1970-03-15','M','+30 6944667792',183,85,56,'123456Nks'),
+(1000,'Dimitris Papadopoulos','2010-04-25','M','+30 6980226033',200,100,16,'123456Dmp');
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
 

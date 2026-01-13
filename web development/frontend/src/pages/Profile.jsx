@@ -20,8 +20,8 @@ export default function Profile({ user }){
     setBookings(b => b.filter(x => x.id !== id));
   };
 
-  // Get user data from localStorage (stored during signup/login)
-  const userData = user || JSON.parse(localStorage.getItem('userData') || '{}');
+  // Get user data from localStorage (use app's canonical `gymdb_user` key)
+  const userData = user || JSON.parse(localStorage.getItem('gymdb_user') || '{}');
 
   return (
     <section className="page container">
