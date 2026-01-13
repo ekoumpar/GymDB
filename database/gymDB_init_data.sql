@@ -1,12 +1,12 @@
 USE gymdb;
 
-INSERT INTO member (member_id, name, date_of_birth, sex, phone_number, height, weight)
+INSERT INTO member (member_id, name, date_of_birth, sex, phone_number, height, weight, password)
 VALUES
-(32,'Leoudi Dimitra Eleni','2003-04-24','F','+30 6980606077',187,57),
-(762,'Natalia Anastasia Kousta','2003-10-06','F','+30 6940078799',182,49),
-(859,'Koumparidou Eleni','2003-02-07','F','+30 6940257161',175,60),
-(957,'Nikos Papas','1970-03-15','M','+30 6944667792',183,85),
-(1000,'Dimitris Papadopoulos','2010-04-25','M','+30 6980226033',200,100);
+(32,'Leoudi Dimitra Eleni','2003-04-24','F','+30 6980606077',187,57,'123456Mil'),
+(762,'Natalia Anastasia Kousta','2003-10-06','F','+30 6940078799',182,49,'123456Nat '),
+(859,'Koumparidou Eleni','2003-02-07','F','+30 6940257161',175,60,'123456Kou'),
+(957,'Nikos Papas','1970-03-15','M','+30 6944667792',183,85,'123456Nks'),
+(1000,'Dimitris Papadopoulos','2010-04-25','M','+30 6980226033',200,100,'123456Dmp');
 
 UPDATE member
 SET age = TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE())
