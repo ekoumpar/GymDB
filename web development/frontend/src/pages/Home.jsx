@@ -7,7 +7,7 @@ const img1 = '/assets/images/group-class.jpg';
 const img2 = '/assets/images/personal-training.jpg';
 const img3 = '/assets/images/facilities.jpg';
 
-export default function Home(){
+export default function Home({ user }){
   return (
     <>
       <section className="hero hero-strong" style={{backgroundImage:`linear-gradient(rgba(5,5,8,0.6), rgba(5,5,8,0.25)), url(${heroImage})`}}>
@@ -15,7 +15,14 @@ export default function Home(){
           <h1 className="hero-title">Train Smarter. Live Stronger.</h1>
           <p className="hero-sub">Memberships, class bookings, and progress tracking — all in one place.</p>
           <div className="cta">
-            <Link className="btn primary large" to="/auth">Get Started</Link>
+            {!user ? (
+              <Link className="btn primary large" to="/auth">Get Started</Link>
+            ) : (
+              <>
+                <Link className="btn primary large" to="/profile">My Profile</Link>
+                <Link className="btn" to="/schedule" style={{ marginLeft: '8px' }}>Book a class</Link>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -55,9 +62,17 @@ export default function Home(){
         <div className="container cta-box">
           <div>
             <h3>Ready to start?</h3>
-            <p className="muted">Create an account and book your first class in minutes.</p>
+            {!user ? (
+              <p className="muted">Create an account and book your first class in minutes.</p>
+            ) : (
+              <p className="muted">Welcome back{user.name ? `, ${user.name}` : ''}! Visit your profile to manage bookings.</p>
+            )}
           </div>
-          <Link className="btn primary" to="/auth">Create account</Link>
+          {!user ? (
+            <Link className="btn primary" to="/auth">Create account</Link>
+          ) : (
+            <Link className="btn primary" to="/profile">Go to profile</Link>
+          )}
         </div>
       </section>
     </>

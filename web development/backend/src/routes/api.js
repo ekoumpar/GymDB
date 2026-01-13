@@ -44,6 +44,7 @@ router.post('/auth/register', authValidator, validationResultHandler, authContro
 router.post('/auth/login', authValidator, validationResultHandler, authController.login);
 
 // Register a member to a class - attempts to insert into `registrations` or `class_registrations` (protected)
-router.post('/register', authMiddleware, registrationValidator, validationResultHandler, registrationsController.register);
+// Log body for debugging registration payloads, then validate
+router.post('/register', authMiddleware, (req,res,next)=>{ console.log('[route /register] body:', JSON.stringify(req.body)); next(); }, registrationValidator, validationResultHandler, registrationsController.register);
 
 module.exports = router;

@@ -76,7 +76,7 @@ export default function Profile({ user }){
 
       <div className="section section--subtle">
         <div className="section-header"><h2>Your Bookings</h2></div>
-        <div className="grid">
+        <div className="grid schedule-grid">
           {bookings.length===0 && (
             <div style={{ gridColumn: '1 / -1', padding: '40px 20px', textAlign: 'center' }}>
               <p className="muted" style={{ fontSize: '16px' }}>No bookings yet.</p>
@@ -84,13 +84,16 @@ export default function Profile({ user }){
             </div>
           )}
           {bookings.map(b=> (
-            <div key={b.id} className="card">
-              <p><strong>{b.className || b.name}</strong></p>
-              <p className="muted">{b.date ? formatDate(b.date) : (b.time || 'TBD')} — {b.trainer || 'TBA'}</p>
-              {b.location && <p className="muted">Location: {b.location}</p>}
-              <div className="card-actions">
-                <button className="btn" onClick={()=>handleCancel(b.id)}>Cancel</button>
+            <div key={b.id} className="card schedule-card">
+              <div className="card-header">
+                <h3 className="schedule-title">{b.className || b.name}</h3>
+                <div className="time-badge">{b.time || 'TBD'}</div>
               </div>
+              <div className="schedule-meta">
+                <span className="trainer-chip">{b.trainer || b.trainer_name || 'TBA'}</span>
+                <span className="day-chip">{b.day || ''}</span>
+              </div>
+              <div style={{ marginTop: 8 }} />
             </div>
           ))}
         </div>

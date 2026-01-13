@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { fetchSchedule } from '../api/api';
+import React, { useEffect, useState, useRef } from 'react';
+import { fetchSchedule, bookClass } from '../api/api';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { showToast } from '../utils/toast';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function Schedule(){
   const [schedule, setSchedule] = useState([]);
@@ -43,7 +46,11 @@ export default function Schedule(){
     return out;
   }
 
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const highlight = params.get('workout') || '';
   const entries = normalize(schedule);
+  const containerRef = useRef(null);
   const daysOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   // Always show all seven weekdays in the timetable
   const days = daysOrder;
@@ -52,6 +59,48 @@ export default function Schedule(){
   // build lookup map day->time->entry
   const grid = {};
   entries.forEach(e => { grid[e.day] = grid[e.day] || {}; grid[e.day][e.time] = e; });
+
+  const navigate = useNavigate();
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [confirmWorkout, setConfirmWorkout] = React.useState('');
+  const [confirmDay, setConfirmDay] = React.useState('');
+  const [confirmTime, setConfirmTime] = React.useState('');
+
+  function openConfirm(workoutName, day, time){
+    const token = localStorage.getItem('gymdb_token');
+    if(!token){ navigate('/auth'); return; }
+    setConfirmWorkout(workoutName || '');
+    setConfirmDay(day || '');
+    setConfirmTime(time || '');
+    setConfirmOpen(true);
+  }
+
+  async function handleConfirm(){
+    setConfirmOpen(false);
+    if(!confirmWorkout) return;
+    try{
+      await bookClass({ workout: confirmWorkout, day: confirmDay, time: confirmTime });
+      showToast(`Booked — ${confirmWorkout} (${confirmDay} ${confirmTime})`, { type: 'success' });
+    }catch(err){
+      let msg = 'Booking failed';
+      try{
+        if(err && err.response && err.response.data){
+          const data = err.response.data;
+          if(data.error) msg = data.error;
+          else if(data.message) msg = data.message;
+          else if(data.errors && Array.isArray(data.errors)){
+            msg = data.errors.map(e => e.msg || e.param || JSON.stringify(e)).join('; ');
+          } else if(data.ok === false && data.errors) {
+            msg = Array.isArray(data.errors) ? data.errors.map(e=>e.msg||JSON.stringify(e)).join('; ') : String(data.errors);
+          } else {
+            msg = JSON.stringify(data);
+          }
+        } else if(err && err.message) msg = err.message;
+      }catch(e){ msg = 'Booking failed'; }
+      showToast(msg, { type: 'error' });
+      console.error('bookClass error', err);
+    }
+  }
 
   return (
     <section className="page container">
@@ -77,18 +126,31 @@ export default function Schedule(){
                   return (
                     <div key={`${d}-${t}`} className="cell">
                       {e ? (
-                        <div className="class-cell">
-                          <div className="class-name">{e.name}</div>
-                          <div className="class-meta">
-                            <span className="trainer-chip">{e.trainer || 'TBA'}</span>
-                          </div>
+                                    <div
+                                      className={`class-cell ${highlight && e.name && e.name.toLowerCase() === highlight.toLowerCase() ? 'highlight' : ''} clickable-cell`}
+                                      role="button"
+                                      tabIndex={0}
+                                      onClick={() => openConfirm(e.name, d, t)}
+                                      onKeyDown={(ev)=>{ if(ev.key==='Enter' || ev.key===' '){ ev.preventDefault(); openConfirm(e.name, d, t); } }}
+                                    >
+                                      <div className="class-name">{e.name}</div>
+                                      <div className="class-meta">
+                                        <span className="trainer-chip">{e.trainer || 'TBA'}</span>
+                                      </div>
+                                    </div>
+                                  ) : null}
                         </div>
-                      ) : null}
-                    </div>
-                  );
+                      );
                 })}
               </React.Fragment>
             ))}
+                <ConfirmModal
+                  open={confirmOpen}
+                  title={`Book ${confirmWorkout} — ${confirmDay} ${confirmTime}`}
+                  message={`Do you want to book ${confirmWorkout} on ${confirmDay} at ${confirmTime}?`}
+                  onConfirm={handleConfirm}
+                  onCancel={()=>setConfirmOpen(false)}
+                />
           </div>
         )}
       </div>

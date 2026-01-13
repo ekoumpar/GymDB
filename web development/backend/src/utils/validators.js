@@ -17,10 +17,15 @@ const membersValidator = [
   })
 ];
 
-// registration validator (member_id & class_id required)
+// registration validator: require member_id and one of reservation_id OR class_id OR (workout+day+time)
 const registrationValidator = [
   body('member_id').notEmpty().withMessage('member_id required'),
-  body('class_id').notEmpty().withMessage('class_id required')
+  check().custom((_, { req }) => {
+    const body = req.body || {};
+    if(body && (body.reservation_id || body.class_id)) return true;
+    if(body && body.workout && body.day && body.time) return true;
+    return Promise.reject('Provide reservation_id OR class_id OR workout+day+time');
+  })
 ];
 
 module.exports = { authValidator, membersValidator, registrationValidator };

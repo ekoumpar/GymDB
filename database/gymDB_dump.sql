@@ -1,36 +1,3 @@
-http://localhost:4000/api/trainers
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 CREATE DATABASE  IF NOT EXISTS `gymdb` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `gymdb`;
 -- MySQL dump 10.13  Distrib 8.0.44, for Win64 (x86_64)
@@ -86,7 +53,7 @@ DROP TABLE IF EXISTS `financial_administration`;
 /*!50001 DROP VIEW IF EXISTS `financial_administration`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `financial_administration` AS SELECT 
+/*!50001 CREATE VIEW `financial_administration` AS SELECT
  1 AS `member_id`,
  1 AS `subscription_name`,
  1 AS `duration`,
@@ -106,7 +73,7 @@ DROP TABLE IF EXISTS `member`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `member` (
-  `member_id` int NOT NULL,
+  `member_id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `date_of_birth` char(11) NOT NULL,
   `sex` enum('F','M') NOT NULL,
@@ -125,7 +92,13 @@ CREATE TABLE `member` (
 
 LOCK TABLES `member` WRITE;
 /*!40000 ALTER TABLE `member` DISABLE KEYS */;
-INSERT INTO `member` VALUES (32,'Leoudi Dimitra Eleni','2003-04-24','F','+30 6980606077',187,57,22),(762,'Natalia Anastasia Kousta','2003-10-06','F','+30 6940078799',182,49,22),(859,'Koumparidou Eleni','2003-02-07','F','+30 6940257161',175,60,22),(957,'Nikos Papas','1970-03-15','M','+30 6944667792',183,85,55),(1000,'Dimitris Papadopoulos','2010-04-25','M','+30 6980226033',200,100,15);
+INSERT INTO `member`
+VALUES
+(32,'Leoudi Dimitra Eleni','2003-04-24','F','+30 6980606077',187,57,22,''),
+(762,'Natalia Anastasia Kousta','2003-10-06','F','+30 6940078799',182,49,22, ''),
+(859,'Kostis Alexandros Papadopoulos','1995-12-15','M','+30 6934567890',178,75,30, ''),
+(957,'Maria Ioanna Vasilaki','1988-07-22','F','+30 6971234567',165,60,35, ''),
+(1000,'Giorgos Nikolaos Sideris','1990-03-30','M','+30 6909876543',180,80,34, '');
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -275,7 +248,7 @@ DROP TABLE IF EXISTS `timetable`;
 /*!50001 DROP VIEW IF EXISTS `timetable`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `timetable` AS SELECT 
+/*!50001 CREATE VIEW `timetable` AS SELECT
  1 AS `workout_type`,
  1 AS `day`,
  1 AS `time`,

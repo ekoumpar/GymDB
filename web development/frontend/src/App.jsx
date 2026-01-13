@@ -51,11 +51,11 @@ export default function App(){
       <Navbar user={user} onLogout={handleLogout} />
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/classes" element={<ProtectedRoute element={<Classes user={user} />} isAuthenticated={!!user} />} />
-          <Route path="/membership" element={<ProtectedRoute element={<Membership />} isAuthenticated={!!user} />} />
-          <Route path="/trainers" element={<ProtectedRoute element={<Trainers />} isAuthenticated={!!user} />} />
-          <Route path="/schedule" element={<ProtectedRoute element={<Schedule />} isAuthenticated={!!user} />} />
+          <Route path="/" element={<Home user={user} />} />
+          <Route path="/classes" element={<Classes user={user} />} />
+          <Route path="/membership" element={<Membership />} />
+          <Route path="/trainers" element={<Trainers />} />
+          <Route path="/schedule" element={<Schedule />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/auth" element={<Auth onLogin={handleLogin} />} />
           <Route path="/login" element={<Auth onLogin={handleLogin} />} />

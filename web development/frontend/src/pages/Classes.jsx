@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { showToast } from '../utils/toast';
 import { fetchClasses, fetchSchedule, bookClass } from '../api/api';
 
 export default function Classes({ user }){
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(()=>{
     let mounted = true;
@@ -17,14 +21,21 @@ export default function Classes({ user }){
   },[]);
 
   const handleBook = async (id)=>{
-    if(!user){ alert('Please login to book classes'); return; }
+    if(!user){ showToast('Please login to book classes', { type: 'info' }); return; }
     try{
       await bookClass(id);
-      alert('Booked — check your profile');
-    }catch(e){ alert('Booking failed'); }
+      showToast('Booked — check your profile', { type: 'success' });
+    }catch(e){ showToast('Booking failed', { type: 'error' }); }
   }
 
   if(loading) return <p>Loading classes…</p>;
+
+  const handleCardActivate = (e, workoutName) => {
+    // ignore clicks on internal links/buttons
+    if(e && e.target && e.target.closest && e.target.closest('a,button')) return;
+    if(!workoutName) return;
+    navigate(`/schedule?workout=${encodeURIComponent(workoutName)}`);
+  }
 
   return (
     <section className="page container">
@@ -39,7 +50,14 @@ export default function Classes({ user }){
             const pct = intensity ? Math.max(0, Math.min(100, Math.round((intensity / 10) * 100))) : 0;
             const level = intensity == null ? 'none' : intensity <= 4 ? 'low' : intensity <= 7 ? 'mid' : 'high';
             return (
-              <article key={c.name || idx} className="card">
+              <article
+                key={c.name || idx}
+                className="card clickable"
+                role="button"
+                tabIndex={0}
+                onClick={(e) => handleCardActivate(e, c.name)}
+                onKeyDown={(e) => { if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleCardActivate(e, c.name); } }}
+              >
                   <div className="card-header">
                     <h3>{c.name || 'Class'}</h3>
                     <div className="duration-badge">{c.duration ? `${c.duration} min` : 'TBA'}</div>
@@ -53,6 +71,7 @@ export default function Classes({ user }){
                     <div className={`intensity-fill ${level}`} style={{ width: `${pct}%` }} />
                   </div>
                 </div>
+
               </article>
             );
           })}
