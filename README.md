@@ -154,17 +154,7 @@ GymDB/
 │       └── public/             # Δημόσιες πηγές
 ```
 
-## Πληροφορίες Ασφαλείας
-
-### Αυθεντικοποίηση
-- Χρήση **JWT (JSON Web Tokens)** για διαχείριση συνεδρίας
-- Κωδικοποίηση κωδικών πρόσβασης με **bcryptjs**
-- Tokens αποθηκεύονται ασφαλώς στο τοπικό αποθετήριο του browser
-
-### Επικύρωση Δεδομένων
-- Επικύρωση εισόδου στο backend και frontend
-- Προστασία έναντι SQL injection
-- CORS ενεργοποιημένο για ασφαλή cross-origin requests
+---
 
 ## Ανάπτυξη
 
@@ -203,8 +193,6 @@ npm start
 - **Προστασία έναντι SQL injection** με parameterized queries
 
 ### Διαχείριση Σφαλμάτων
-- Κεντρικό error handler middleware
-- Αναλυτικά error logs για debugging
 - Error messages για τον χρήστη
 
 
