@@ -1,3 +1,7 @@
+/**
+ * Registrations controller — normalize registration payloads, delegate to
+ * `registrationsService`, translate outcomes to HTTP responses, and forward errors.
+ */
 const registrationsService = require('../services/registrationsService');
 const { ok } = require('../utils/responses');
 

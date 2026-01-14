@@ -1,7 +1,9 @@
 import React from 'react';
 
+// ConfirmModal: simple, accessible confirmation dialog.
+// Props: `open` (boolean), `title`, `message`, `onConfirm`, `onCancel`.
 export default function ConfirmModal({ open, title = '', message = '', onConfirm = ()=>{}, onCancel = ()=>{} }){
-  if(!open) return null;
+  if(!open) return null; // don't render when closed
   return (
     <div className="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
       <div className="confirm-box">

@@ -1,13 +1,16 @@
+// Core framework and configuration
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 dotenv.config();
 
+// Route and middleware imports
 const api = require('./routes/api');
 const logger = require('./middleware/logger');
 const errorHandler = require('./middleware/errorHandler');
 
+// App setup: parsers, CORS and request logging
 const app = express();
 app.use(cors());
 app.use(express.json());

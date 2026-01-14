@@ -1,3 +1,7 @@
+/**
+ * Authentication controller — validate auth payloads, normalize data,
+ * delegate to `authService`, issue tokens, and forward errors to middleware.
+ */
 const authService = require('../services/authService');
 const { generateToken } = require('../middleware/auth');
 const { ok } = require('../utils/responses');

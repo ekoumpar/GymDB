@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+// Navbar: responsive site navigation. Shows auth links when `user` is present
+// and a menu toggle for small screens.
 export default function Navbar({ user, onLogout }){
   const [open, setOpen] = useState(false);
   return (

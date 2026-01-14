@@ -1,9 +1,12 @@
+// Signup page: collects registration details, validates password rules, and
+// calls `signup` API, then triggers `onLogin` on success.
 import React, { useState } from 'react';
 import CustomSelect from '../components/CustomSelect';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../api/api';
 
 function validatePassword(p){
+  // Password rules used in signup validation
   if(!p || p.length < 8) return 'Password must be at least 8 characters.';
   if(!/[0-9]/.test(p)) return 'Password must contain at least one digit.';
   if(!/[A-Z]/.test(p)) return 'Password should include an uppercase letter.';
@@ -23,6 +26,7 @@ export default function Signup({ onLogin }){
   const navigate = useNavigate();
 
   const handleSubmit = async (e)=>{
+    // Submit handler: validate and call `signup`, then trigger `onLogin`
     e.preventDefault();
     setError(null);
     const pErr = validatePassword(password);

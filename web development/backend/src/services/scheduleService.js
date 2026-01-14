@@ -1,3 +1,6 @@
+// Schedule service: returns gym timetable (DB or mock).
+// Uses the `timetable` view for schedule data; trainers are provided by
+// the joined trainer data (see `trainersService` for trainer lookups).
 const pool = require('../config/database');
 const mock = require('../utils/mockData');
 

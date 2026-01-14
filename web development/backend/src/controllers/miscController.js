@@ -1,3 +1,7 @@
+/**
+ * Misc controller — internal debug utilities (e.g., `getTable`); validate
+ * inputs to reduce injection risk, query via `pool`, and forward errors.
+ */
 const pool = require('../config/database');
 
 // Helper to validate table names (only letters, numbers, underscore)

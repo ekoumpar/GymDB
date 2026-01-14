@@ -1,3 +1,7 @@
+/**
+ * Bookings controller — resolve user identity, validate inputs, delegate
+ * booking retrieval/deletion to `bookingsService`, and forward errors.
+ */
 const bookingsService = require('../services/bookingsService');
 const { ok } = require('../utils/responses');
 

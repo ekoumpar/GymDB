@@ -1,9 +1,11 @@
+// Contact page: static contact information, opening hours and embedded map.
 import React from 'react';
 
 export default function Contact(){
   return (
     <section className="page container">
       <div className="section section--subtle">
+        {/* Static contact information and an embedded map for location */}
         <div className="section-header"><h2>Contact Us</h2></div>
         <div className="card">
           <h3>Contact</h3>

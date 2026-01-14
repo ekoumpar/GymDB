@@ -1,3 +1,7 @@
+/**
+ * Trainers controller — list trainers via `trainersService`, wrap results
+ * with `ok`, and forward errors to middleware.
+ */
 const trainersService = require('../services/trainersService');
 const { ok } = require('../utils/responses');
 

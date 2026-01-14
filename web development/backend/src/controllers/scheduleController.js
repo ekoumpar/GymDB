@@ -1,3 +1,7 @@
+/**
+ * Schedule controller — fetch schedule via `scheduleService`, return `ok`
+ * responses, and forward errors to middleware.
+ */
 const scheduleService = require('../services/scheduleService');
 const { ok } = require('../utils/responses');
 
