@@ -25,11 +25,19 @@ git clone https://github.com/ekoumpar/GymDB.git
 
 ### 2. Δημιουργία Βάσης Δεδομένων
 1. Ανοίξτε Command Prompt (cmd).
-2. Εκτέλεστε (αντικαταστήστε με το απόλυτο path):
+2. **Επιλογή Α - Χρήση Dump:**
 ```
 mysql -u root -p < "C:\Users\...\GymDB\web development\backend\gymDB_dump.sql"
 ```
-3. Πληκτρολογήστε τον κωδικό root της MySQL.
+
+**Επιλογή Β - Χρήση αρχείων από database folder:**
+```
+mysql -u root -p < "C:\Users\...\GymDB\database\gymDB_model.mwb"
+mysql -u root -p < "C:\Users\...\GymDB\database\gymDB_users.sql"
+mysql -u root -p < "C:\Users\...\GymDB\database\gymDB_init_data.sql"
+```
+
+4. Πληκτρολογήστε τον κωδικό root της MySQL.
 
 > ⚠️ Αν το path έχει κενά, διατήρηστε τα εισαγωγικά " ".
 
@@ -89,3 +97,49 @@ npm start
 Για περισσότερες λεπτομέρειες, δείτε τα αρχεία README σε: 
 - [Backend README](web%20development/backend/README.md)
 - [Frontend README](web%20development/frontend/README.md) 
+
+## Δομή Έργου
+
+```
+GymDB/
+├── database/
+│   ├── *.sql & *.mwb     # Βοηθητικά αρχεία (δημιουργημένα με τη βάση)
+│   └── queries/          # Πολύπλοκα SQL ερωτήματα       
+│
+├── web development/
+│   ├── backend/
+│   │   ├── src/
+│   │   │   ├── api.js
+│   │   │   ├── app.js
+│   │   │   ├── auth.js
+│   │   │   ├── db.js
+│   │   │   ├── index.js
+│   │   │   ├── controllers/
+│   │   │   ├── services/
+│   │   │   ├── routes/
+│   │   │   ├── middleware/
+│   │   │   ├── config/
+│   │   │   └── utils/
+│   │   ├── server.js
+│   │   ├── package.json
+│   │   ├── gymDB_dump.sql
+│   │   ├── .env.example
+│   │   └── README.md
+│   │
+│   └── frontend/
+│       ├── src/
+│       │   ├── App.jsx
+│       │   ├── index.js
+│       │   ├── index.css
+│       │   ├── api/
+│       │   ├── components/
+│       │   ├── pages/
+│       │   ├── styles/
+│       │   └── utils/
+│       ├── public/
+│       ├── package.json
+│       ├── .gitignore
+│       └── README.md
+```
+
+---
