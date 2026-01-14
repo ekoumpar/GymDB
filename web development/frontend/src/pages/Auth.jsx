@@ -25,8 +25,19 @@ export default function Auth({ onLogin }){
   const navigate = useNavigate();
 
   const switchTo = (m) => {
-    setError(null); setPassError(null); setMode(m);
+    setError(null); setPassError(null);
+    // clear form fields when switching modes to avoid stale values (e.g. weight appearing as name)
+    setIdentifier(''); setPassword(''); setName(''); setDateOfBirth(''); setSex(''); setPhoneNumber(''); setHeight(''); setWeight('');
+    setMode(m);
   };
+
+  React.useEffect(()=>{
+    // ensure identifier is empty on mount to avoid stale autofill values
+    setIdentifier('');
+    // Some browsers apply autofill after initial render; clear again shortly after
+    const t = setTimeout(()=>{ setIdentifier(''); setPassword(''); }, 500);
+    return ()=>clearTimeout(t);
+  }, []);
 
   const handleSubmit = async (e)=>{
     e.preventDefault();
@@ -45,7 +56,8 @@ export default function Auth({ onLogin }){
         // Merge server user object with additional details for the client
         const clientUser = {
           id: user.id,
-          username: user.username,
+          // store the full name as `username` for client consistency
+          username: name + '',
           name,
           dateOfBirth,
           sex: sex || 'M',
@@ -64,9 +76,26 @@ export default function Auth({ onLogin }){
         const data = await login(identifier, password);
         const user = data && data.user ? data.user : {};
         const token = data && data.token ? data.token : null;
-        localStorage.setItem('gymdb_user', JSON.stringify(user));
+        // Map server user to a sanitized client user to avoid incorrect field mapping
+        // Defensive mapping: avoid numeric values (e.g. weight) being used as the display name
+        const rawName = user.name || user.username || '';
+        const nameIsNumeric = typeof rawName === 'number' || (/^\d+(?:\.\d+)?$/.test(String(rawName).trim()));
+        const safeName = nameIsNumeric ? (user.username || '') : rawName;
+
+        const clientUser = {
+          id: user.id || user.userId || user.member_id || null,
+          // prefer the full (safe) name as the username value
+          username: safeName + '',
+          name: safeName + '',
+          dateOfBirth: user.dateOfBirth || user.date_of_birth || '',
+          sex: user.sex || '',
+          phoneNumber: user.phoneNumber || user.phone_number || '',
+          height: user.height || 0,
+          weight: user.weight || 0
+        };
+        localStorage.setItem('gymdb_user', JSON.stringify(clientUser));
         if(token) localStorage.setItem('gymdb_token', token);
-        onLogin({ user, token });
+        onLogin({ user: clientUser, token });
         navigate('/profile');
       }catch(err){ setError('Login failed'); }
     }
@@ -80,7 +109,10 @@ export default function Auth({ onLogin }){
         <button className={`tab ${mode==='signup'? 'tab--active':''}`} onClick={()=>switchTo('signup')} type="button">Sign up</button>
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} autoComplete="off">
+        {/* Hidden fields to capture browser autofill and prevent it from filling visible inputs */}
+        <input type="text" name="__username_hint" autoComplete="username" style={{ display: 'none' }} aria-hidden="true" />
+        <input type="password" name="__password_hint" autoComplete="current-password" style={{ display: 'none' }} aria-hidden="true" />
         {mode==='signup' ? (
           <>
             <div style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '20px', marginBottom: '20px' }}>
@@ -88,7 +120,9 @@ export default function Auth({ onLogin }){
 
               <label style={{ display: 'block', marginBottom: '15px' }}>
                 <span style={{ display: 'block', marginBottom: '5px', fontSize: '0.9em' }}>Full Name *</span>
-                <input type="text" value={name} onChange={e=>setName(e.target.value)} style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} required />
+                  <input name="fullname" autoComplete="name" type="text" value={name} onChange={e=>setName(e.target.value)} style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} required />
+                  {/* Provide a hidden username field with autocomplete=username so password managers use the full name */}
+                  <input type="text" name="username" autoComplete="username" value={name} readOnly style={{ display: 'none' }} aria-hidden="true" />
               </label>
 
               <label style={{ display: 'block', marginBottom: '15px' }}>
@@ -135,20 +169,28 @@ export default function Auth({ onLogin }){
 
             <label style={{ display: 'block' }}>
               <span style={{ display: 'block', marginBottom: '5px', fontSize: '0.9em' }}>Password *</span>
-              <input type="password" value={password} onChange={e=>setPassword(e.target.value)} style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} required />
+              <input name="new-password" autoComplete="new-password" type="password" value={password} onChange={e=>setPassword(e.target.value)} style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} required />
             </label>
           </>
         ) : (
-          <label style={{display:'block', marginBottom: '15px'}}>
+            <label style={{display:'block', marginBottom: '15px'}}>
             <span style={{ display: 'block', marginBottom: '5px', fontSize: '0.9em' }}>Full Name</span>
-            <input type="text" value={identifier} onChange={e=>setIdentifier(e.target.value)} aria-label="Full name" style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} />
+            <input
+              name="login_identifier"
+              autoComplete="off"
+              type="text"
+              value={identifier}
+              onChange={e=>setIdentifier(e.target.value)}
+              aria-label="Full name"
+              style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }}
+            />
           </label>
         )}
 
         {mode === 'login' && (
           <label style={{display:'block'}}>
             <span style={{ display: 'block', marginBottom: '5px', fontSize: '0.9em' }}>Password</span>
-            <input type="password" value={password} onChange={e=>setPassword(e.target.value)} style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} />
+            <input name="password" autoComplete="current-password" type="password" value={password} onChange={e=>setPassword(e.target.value)} style={{ width: '100%', padding: '10px', boxSizing: 'border-box' }} />
           </label>
         )}
 

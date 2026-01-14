@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { showToast } from '../utils/toast';
-import { fetchClasses, fetchSchedule, bookClass } from '../api/api';
+import { fetchClasses } from '../api/api';
 
-export default function Classes({ user }){
+export default function Classes(){
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,14 +18,6 @@ export default function Classes({ user }){
     })();
     return ()=>mounted=false;
   },[]);
-
-  const handleBook = async (id)=>{
-    if(!user){ showToast('Please login to book classes', { type: 'info' }); return; }
-    try{
-      await bookClass(id);
-      showToast('Booked — check your profile', { type: 'success' });
-    }catch(e){ showToast('Booking failed', { type: 'error' }); }
-  }
 
   if(loading) return <p>Loading classes…</p>;
 

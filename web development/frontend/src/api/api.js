@@ -2,11 +2,13 @@ import axios from 'axios';
 
 const api = axios.create({ baseURL: '/api' });
 
+// Set auth token for future requests
 export function setAuthToken(token){
   if(token) api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   else delete api.defaults.headers.common['Authorization'];
 }
 
+// Fetch list of available classes
 export async function fetchClasses(){
   try{
     const res = await api.get('/classes');
@@ -16,6 +18,7 @@ export async function fetchClasses(){
   }
 }
 
+// Fetch weekly schedule
 export async function fetchSchedule(){
   try{
     const res = await api.get('/schedule');
@@ -25,6 +28,7 @@ export async function fetchSchedule(){
   }
 }
 
+// Fetch list of trainers
 export async function fetchTrainers(){
   try{
     const res = await api.get('/trainers');
@@ -32,6 +36,7 @@ export async function fetchTrainers(){
   }catch(e){ throw e; }
 }
 
+// Fetch list of membership plans
 export async function fetchMemberships(){
   try{
     const res = await api.get('/memberships');
@@ -39,6 +44,7 @@ export async function fetchMemberships(){
   }catch(e){ throw e; }
 }
 
+// Book a class
 export async function bookClass(classInfo){
   try{
     // backend expects protected POST /register with member_id and either:
@@ -78,6 +84,7 @@ export async function bookClass(classInfo){
   }
 }
 
+// User login
 export async function login(identifier, password){
   try{
     // backend expects `username` for login
@@ -88,6 +95,7 @@ export async function login(identifier, password){
   }
 }
 
+// User signup
 export async function signup(name, password, details = {}){
   try{
     // backend register expects `username`, `password`, and member details
@@ -106,8 +114,7 @@ export async function signup(name, password, details = {}){
   }
 }
 
-export default api;
-
+// Fetch user's bookings
 export async function fetchUserBookings(){
   try{
     const res = await api.get('/bookings');
@@ -117,11 +124,3 @@ export async function fetchUserBookings(){
   }
 }
 
-export async function cancelBooking(bookingId){
-  try{
-    const res = await api.delete(`/bookings/${bookingId}`);
-    return res.data;
-  }catch(e){
-    throw e;
-  }
-}

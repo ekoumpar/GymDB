@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchSchedule, bookClass } from '../api/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toast';
@@ -26,20 +26,23 @@ export default function Schedule(){
 
   // normalize schedule into flat entries: { day: 'Monday', time: '08:00', name, trainer }
   function normalize(data){
-    const shortToFull = {Monday:'Monday',Tue:'Tuesday',Wed:'Wednesday',Thu:'Thursday',Fri:'Friday',Sat:'Saturday',Sun:'Sunday'};
+    const shortToFull = {mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
     const out = [];
     if(!Array.isArray(data)) return out;
     data.forEach(item => {
       // mock format: { day: 'Mon', items: [{time:'08:00', name:'Yoga'}] }
       if(item && item.day && Array.isArray(item.items)){
-        const dayFull = shortToFull[item.day] || (item.day.length>3 ? item.day : item.day);
-        item.items.forEach(it => { out.push({ day: dayFull, time: it.time, name: it.name || it.workout_type || it.workoutType, trainer: it.trainer }); });
+        const key = String(item.day || '').toLowerCase().slice(0,3);
+        const dayFull = shortToFull[key] || (item.day.length>3 ? item.day : item.day);
+        item.items.forEach(it => { out.push({ day: dayFull, time: it.time, name: it.name || it.workout_type || it.workoutType, trainer: it.trainer || it.trainer_name }); });
       } else if(item && item.day && item.time && item.name){
         // already flat
-        const dayFull = shortToFull[item.day] || item.day;
-        out.push({ day: dayFull, time: item.time, name: item.name, trainer: item.trainer });
+        const key = String(item.day || '').toLowerCase().slice(0,3);
+        const dayFull = shortToFull[key] || item.day;
+        out.push({ day: dayFull, time: item.time, name: item.name, trainer: item.trainer || item.trainer_name });
       } else if(item && item.day && item.time && item.workout_type){
-        const dayFull = shortToFull[item.day] || item.day;
+        const key = String(item.day || '').toLowerCase().slice(0,3);
+        const dayFull = shortToFull[key] || item.day;
         out.push({ day: dayFull, time: item.time, name: item.workout_type, trainer: item.trainer_name || item.trainer });
       }
     });
@@ -50,7 +53,6 @@ export default function Schedule(){
   const params = new URLSearchParams(location.search);
   const highlight = params.get('workout') || '';
   const entries = normalize(schedule);
-  const containerRef = useRef(null);
   const daysOrder = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
   // Always show all seven weekdays in the timetable
   const days = daysOrder;

@@ -3,16 +3,29 @@ const mock = require('../utils/mockData');
 
 async function getMembers(limit = 200){
   if(process.env.USE_MOCK === '1'){
-    return mock.members.slice(0, limit);
+    return mock.members.slice(0, limit).map(m => {
+      const { password, ...rest } = m;
+      return rest;
+    });
   }
   const [rows] = await pool.query('SELECT * FROM `member` LIMIT ?', [limit]);
-  return rows;
+  return rows.map(r => {
+    const { password, ...rest } = r;
+    return rest;
+  });
 }
 
 async function addMember(data){
   if(process.env.USE_MOCK === '1'){
-    const id = `m${Date.now()}`;
-    const member = { id, name: data.name || data.username || 'Guest', email: data.email || '' };
+    // generate sequential mock member id like 'm3'
+    let maxNum = 0;
+    mock.members.forEach(m => {
+      const match = String(m.id || '').match(/m(\d+)$/i);
+      if(match){ const n = parseInt(match[1],10); if(!isNaN(n) && n>maxNum) maxNum = n; }
+    });
+    const next = maxNum + 1 || 1;
+    const id = `m${next}`;
+    const member = { id, name: data.name || 'Guest' };
     mock.members.push(member);
     return { insertId: id };
   }

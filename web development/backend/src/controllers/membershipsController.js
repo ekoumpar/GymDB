@@ -1,7 +1,7 @@
 const membershipsService = require('../services/membershipsService');
 const { ok } = require('../utils/responses');
 
-async function getMemberships(req, res, next){
+async function getMemberships(_, res, next){
   try{
     const rows = await membershipsService.getMemberships();
     return ok(res, { memberships: rows });

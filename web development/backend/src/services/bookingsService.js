@@ -3,38 +3,95 @@ const mock = require('../utils/mockData');
 
 async function getBookingsForUser(userId){
   if(process.env.USE_MOCK === '1'){
-    return mock.bookings.filter(b => b.memberId === userId);
+    // Normalize mock bookings to include day/time and trainer_name to match DB-driven responses
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    return mock.bookings
+      .filter(b => b.memberId === userId)
+      .map(b => {
+        let day = '';
+        let time = '';
+        if(b.date){
+          try{
+            const dt = new Date(b.date);
+            day = days[dt.getUTCDay()];
+            const hh = String(dt.getUTCHours()).padStart(2,'0');
+            const mm = String(dt.getUTCMinutes()).padStart(2,'0');
+            time = `${hh}:${mm}`;
+          }catch(e){ /* ignore */ }
+        }
+        return {
+          id: b.id,
+          className: b.className || b.name,
+          name: b.className || b.name,
+          day,
+          time,
+          trainer_name: b.trainer || b.trainer_name || b.trainerName || null
+        };
+      });
   }
   // attempt to read from a bookings table (best-effort)
   try{
     const [rows] = await pool.query("SELECT b.*, c.name AS className FROM `bookings` b LEFT JOIN `classes` c ON c.id = b.class_id WHERE b.member_id = ?", [userId]);
-    return rows;
+    // normalize to expected shape and include trainer_name when present
+    return rows.map(rw => ({
+      id: rw.id || rw.booking_id || rw.reservation_id,
+      className: rw.className || rw.name || rw.class_name,
+      name: rw.className || rw.name || rw.class_name,
+      day: rw.day || null,
+      time: rw.time || null,
+      trainer_name: rw.trainer_name || rw.trainer || rw.trainerName || null
+    }));
   }catch(err){
     // fallback - try registrations table
     try{
       const [rows] = await pool.query("SELECT r.*, c.name AS className FROM `registrations` r LEFT JOIN `classes` c ON c.id = r.class_id WHERE r.member_id = ?", [userId]);
-      return rows;
+      return rows.map(rw => ({
+        id: rw.id || rw.registration_id || rw.reservation_id,
+        className: rw.className || rw.name || rw.class_name,
+        name: rw.className || rw.name || rw.class_name,
+        day: rw.day || null,
+        time: rw.time || null,
+        trainer_name: rw.trainer_name || rw.trainer || rw.trainerName || null
+      }));
     }catch(e){
       // fallback: memberreserves joined with reservation
       try{
-        const [rows] = await pool.query("SELECT mr.reservation_id as id, r.workout_type as name, r.workout_type as className, r.day, r.time FROM `memberreserves` mr JOIN `reservation` r ON r.reservation_id = mr.reservation_id WHERE mr.member_id = ?", [userId]);
-        // normalize to expected shape
-        return rows.map(rw => ({ id: rw.id, className: rw.className, name: rw.name, day: rw.day, time: rw.time }));
+        const [rows] = await pool.query(
+          `SELECT mr.reservation_id as id,
+                  r.workout_type as name,
+                  r.workout_type as className,
+                  r.day,
+                  r.time,
+                  t.name as trainer_name
+           FROM memberreserves mr
+           JOIN reservation r ON r.reservation_id = mr.reservation_id
+           LEFT JOIN trainercoaches tc ON tc.workout_type = r.workout_type
+           LEFT JOIN trainer t ON t.trainer_id = tc.trainer_id
+           WHERE mr.member_id = ?`,
+          [userId]
+        );
+        // normalize to expected shape and include trainer_name
+        const mapped = rows.map(rw => ({ id: rw.id, className: rw.className, name: rw.name, day: rw.day, time: rw.time, trainer_name: rw.trainer_name }));
+
+        // For any row missing trainer_name, attempt to lookup a trainer for the workout_type
+        await Promise.all(mapped.map(async (m) => {
+          if(!m.trainer_name){
+            try{
+              const [trows] = await pool.query(
+                'SELECT t.name AS trainer_name FROM trainercoaches tc JOIN trainer t ON t.trainer_id = tc.trainer_id WHERE tc.workout_type = ? LIMIT 1',
+                [m.name]
+              );
+              if(trows && trows[0] && trows[0].trainer_name) m.trainer_name = trows[0].trainer_name;
+            }catch(e){ /* ignore */ }
+          }
+        }));
+
+        return mapped;
       }catch(err2){
         return [];
       }
     }
   }
-}
-
-async function deleteBooking(bookingId){
-  if(process.env.USE_MOCK === '1'){
-    const idx = mock.bookings.findIndex(b=>b.id === bookingId);
-    if(idx === -1) throw new Error('Booking not found');
-    mock.bookings.splice(idx,1);
-    return { deleted: true };
-  }
-  throw new Error('Use deleteBookingForUser(bookingId, userId) instead');
 }
 
 async function deleteBookingForUser(bookingId, userId){

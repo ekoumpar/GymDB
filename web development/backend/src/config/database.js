@@ -15,7 +15,7 @@ const pool = mysql.createPool({
 
 async function testConnection(){
   try{
-    const [rows] = await pool.query('SELECT 1 as ok');
+    const [] = await pool.query('SELECT 1 as ok');
     return true;
   }catch(err){
     // rethrow to let caller handle

@@ -20,7 +20,7 @@ router.get('/table/:name', async (req, res) => {
   }
 });
 
-router.get('/members', async (req, res) => {
+router.get('/members', async (_, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM `members` LIMIT 200');
     res.json(rows);
@@ -29,7 +29,7 @@ router.get('/members', async (req, res) => {
   }
 });
 
-router.get('/trainers', async (req, res) => {
+router.get('/trainers', async (_, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM `trainers` LIMIT 200');
     res.json(rows);
@@ -38,7 +38,7 @@ router.get('/trainers', async (req, res) => {
   }
 });
 
-router.get('/classes', async (req, res) => {
+router.get('/classes', async (_, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM `classes` LIMIT 200');
     res.json(rows);
@@ -95,7 +95,7 @@ router.post('/auth/login', async (req, res) => {
   }
 });
 
-// Register a member to a class - attempts to insert into `registrations` or `class_registrations` (protected)
+// Register a member to a class - attempts to insert into `reservations` (protected)
 router.post('/register', authMiddleware, async (req, res) => {
   try{
     const body = req.body || {};

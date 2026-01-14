@@ -1,7 +1,75 @@
 const pool = require('../config/database');
+const mock = require('../utils/mockData');
 
 async function registerMemberToClass(member_id, classInfo){
   if(!member_id) throw new Error('member_id required');
+  // Mock mode: operate on in-memory mock data instead of DB
+  if(process.env.USE_MOCK === '1'){
+    // normalize incoming info to workout/day/time
+    let workout = null, day = null, time = null, class_id = null;
+    if(typeof classInfo === 'string'){
+      workout = classInfo;
+    } else if(typeof classInfo === 'object' && classInfo !== null){
+      workout = classInfo.workout || classInfo.workout_type || classInfo.name || classInfo.class_id;
+      day = classInfo.day;
+      time = classInfo.time;
+      class_id = classInfo.class_id;
+    }
+
+    // if class_id provided, find class entry
+    if(class_id){
+      const c = mock.classes.find(x => x.id === class_id);
+      if(c) workout = c.name;
+    }
+
+    if(!workout && !class_id) throw new Error('No matching reservation found');
+
+    // if workout provided but no day/time, try to find a schedule row
+    if(!day || !time){
+      const sched = mock.schedule.find(s => (s.name && s.name.toLowerCase() === String(workout||'').toLowerCase()) || (s.workout_type && s.workout_type.toLowerCase() === String(workout||'').toLowerCase()));
+      if(sched){ day = sched.day || day; time = sched.time || time; }
+    }
+
+    if(!day || !time) throw new Error('Provide workout+day+time when using mock mode');
+
+    // check already reserved
+    const exists = mock.bookings.find(b => b.memberId === member_id && (b.className === workout || b.className === (class_id || null)) && (() => {
+      try{ const d = new Date(b.date); return d.getUTCDay() === (['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].indexOf(day)); }catch(e){ return false; }
+    })());
+    if(exists) return { table: 'memberreserves', reservation_id: exists.id, warning: 'already_reserved' };
+
+    // generate reservation id (3 chars)
+    function genId(){ const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'; let s=''; for(let i=0;i<3;i++) s+=chars[Math.floor(Math.random()*chars.length)]; return s; }
+    const newId = genId();
+
+    // compute next date for the weekday at the given time (UTC)
+    function nextDateForWeekday(weekdayName, timeStr){
+      const days = { sunday:0,monday:1,tuesday:2,wednesday:3,thursday:4,friday:5,saturday:6 };
+      const target = days[String(weekdayName||'').toLowerCase()];
+      if(target === undefined) return new Date().toISOString();
+      const [hh,mm] = (timeStr||'00:00').split(':').map(x=>parseInt(x,10)||0);
+      const now = new Date();
+      // start from today at given time (use UTC)
+      const cur = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), hh, mm, 0));
+      let diff = (target - cur.getUTCDay() + 7) % 7;
+      if(diff === 0 && cur.getTime() <= now.getTime()) diff = 7;
+      const result = new Date(cur.getTime() + diff * 24*60*60*1000);
+      return result.toISOString();
+    }
+
+    const dateISO = nextDateForWeekday(day, time);
+
+    // find trainer from schedule or classes
+    let trainer = null;
+    const sch = mock.schedule.find(s => (s.name && s.name.toLowerCase() === String(workout||'').toLowerCase() && s.day === day && s.time === time) || (s.workout_type && s.workout_type.toLowerCase() === String(workout||'').toLowerCase() && s.day === day && s.time === time));
+    if(sch) trainer = sch.trainer_name || sch.trainer;
+    if(!trainer){ const cl = mock.classes.find(c => c.name && c.name.toLowerCase() === String(workout||'').toLowerCase()); if(cl) trainer = cl.trainer; }
+
+    const bookingId = `b${newId}`;
+    const b = { id: bookingId, memberId: member_id, classId: class_id || null, className: workout, trainer: trainer, date: dateISO, location: 'Mock Hall' };
+    mock.bookings.push(b);
+    return { table: 'memberreserves', reservation_id: newId };
+  }
 
   // Helper to insert into memberreserves
   async function insertMemberReserve(memberId, reservationId){

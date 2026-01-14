@@ -18,7 +18,7 @@ const frontendPath = path.join(__dirname, '..', '..', 'frontend');
 app.use(express.static(frontendPath));
 
 // Serve the homepage at `/`
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
 	res.sendFile(path.join(frontendPath, 'home.html'));
 });
 

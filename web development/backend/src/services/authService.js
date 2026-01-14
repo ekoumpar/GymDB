@@ -6,9 +6,16 @@ const mock = require('../utils/mockData');
 
 async function registerUser(username, password, details = {}){
   if(process.env.USE_MOCK === '1'){
-    const id = `m${Date.now()}`;
-    const user = { id, username, name: username, password, ...details };
-    mock.users.push(user);
+    // generate sequential mock member id like 'm3' by finding max existing numeric suffix
+    let maxNum = 0;
+    mock.members.forEach(m => {
+      const match = String(m.id || '').match(/m(\d+)$/i);
+      if(match){ const n = parseInt(match[1],10); if(!isNaN(n) && n>maxNum) maxNum = n; }
+    });
+    const next = maxNum + 1 || 1;
+    const id = `m${next}`;
+    const user = { id, name: username, password, dateOfBirth: details.dateOfBirth || '2000-01-01', sex: details.sex || 'M', phoneNumber: details.phoneNumber || '', height: details.height || 0, weight: details.weight || 0 };
+    mock.members.push(user);
     return { id, username };
   }
   // table assumed present from DB dump/migrations
@@ -23,11 +30,12 @@ async function registerUser(username, password, details = {}){
 
 async function loginUser(username, password){
   if(process.env.USE_MOCK === '1'){
-    // login by username in mock mode
-    const user = mock.users.find(u=>u.username === username);
+    // login by name against mock.members
+    const lookup = String(username || '').toLowerCase();
+    const user = mock.members.find(u => (u.name && u.name.toLowerCase() === lookup) || u.id === username);
     if(!user) throw new Error('Invalid credentials');
     if(user.password && user.password !== password) throw new Error('Invalid credentials');
-    return { id: user.id, username: user.username, name: user.name };
+    return { id: user.id, username: user.name, name: user.name, dateOfBirth: user.dateOfBirth, sex: user.sex, phoneNumber: user.phoneNumber, height: user.height, weight: user.weight };
   }
   const [rows] = await pool.query('SELECT member_id as id, name as username, password, date_of_birth, sex, phone_number, height, weight FROM `member` WHERE name = ? ORDER BY member_id DESC LIMIT 1', [username]);
   const user = rows[0];

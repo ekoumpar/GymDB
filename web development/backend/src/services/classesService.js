@@ -3,11 +3,13 @@ const mock = require('../utils/mockData');
 
 async function getClasses(limit = 200){
   if(process.env.USE_MOCK === '1'){
-    // Return name, duration and intensity from mock data
+    // Return id, name, duration, intensity and trainer from mock data
     return mock.classes.slice(0, limit).map(c => ({
+      id: c.id,
       name: c.name,
       duration: c.duration,
-      intensity: c.intensity !== undefined ? c.intensity : null
+      intensity: c.intensity !== undefined ? c.intensity : null,
+      trainer: c.trainer !== undefined ? c.trainer : null
     }));
   }
   try{
