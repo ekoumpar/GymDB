@@ -31,11 +31,20 @@ mysql -u root -p < "C:\Users\...\GymDB\web development\backend\gymDB_dump.sql"
 ```
 
 **Επιλογή Β - Χρήση αρχείων από database folder:**
+
+Πρώτα δημιουργήστε τη βάση:
 ```
-mysql -u root -p < "C:\Users\...\GymDB\database\gymDB_model.mwb"
+mysql -u root -p -e "CREATE DATABASE gymdb;"
+```
+
+Στη συνέχεια φορτώστε τα αρχεία:
+```
+mysql -u root -p < "C:\Users\...\GymDB\database\gymDB_model.sql"
 mysql -u root -p < "C:\Users\...\GymDB\database\gymDB_users.sql"
 mysql -u root -p < "C:\Users\...\GymDB\database\gymDB_init_data.sql"
 ```
+
+> **Σημείωση:** Τα αρχεία `gymDB_users.sql` περιέχουν κωδικούς χρηστών της βάσης δεδομένων που θα δημιουργηθούν αυτόματα.
 
 4. Πληκτρολογήστε τον κωδικό root της MySQL.
 
