@@ -17,14 +17,22 @@ async function getMembers(limit = 200){
 
 async function addMember(data){
   if(process.env.USE_MOCK === '1'){
-    // generate sequential mock member id like 'm3'
+    // generate sequential mock member id
     let maxNum = 0;
+    let hasNumeric = false;
     mock.members.forEach(m => {
-      const match = String(m.id || '').match(/m(\d+)$/i);
-      if(match){ const n = parseInt(match[1],10); if(!isNaN(n) && n>maxNum) maxNum = n; }
+      const s = String(m.id || '');
+      if(/^[0-9]+$/.test(s)){
+        hasNumeric = true;
+        const n = parseInt(s,10);
+        if(!isNaN(n) && n>maxNum) maxNum = n;
+      } else {
+        const match = s.match(/m(\d+)$/i);
+        if(match){ const n = parseInt(match[1],10); if(!isNaN(n) && n>maxNum) maxNum = n; }
+      }
     });
-    const next = maxNum + 1 || 1;
-    const id = `m${next}`;
+    const next = (maxNum || 0) + 1;
+    const id = hasNumeric ? next : `m${next}`;
     const member = { id, name: data.name || 'Guest' };
     mock.members.push(member);
     return { insertId: id };

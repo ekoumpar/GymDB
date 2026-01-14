@@ -1,9 +1,11 @@
 const dotenv = require('dotenv');
 dotenv.config();
 
-// Optional quiet mode: when PRODUCTION=1 is set in the environment, silence
-// non-error console output to avoid printing data to the terminal.
-if (process.env.PRODUCTION === '1') {
+// Optional quiet mode: when NODE=production or NODE_ENV=production is set in
+// the environment, silence non-error console output to avoid printing data
+// to the terminal in production deployments.
+
+if (process.env.NODE_ENV === 'production') {
 	console.log = () => {};
 	console.info = () => {};
 	console.warn = () => {};

@@ -6,7 +6,7 @@ async function getBookingsForUser(userId){
     // Normalize mock bookings to include day/time and trainer_name to match DB-driven responses
     const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     return mock.bookings
-      .filter(b => b.memberId === userId)
+      .filter(b => String(b.memberId) === String(userId))
       .map(b => {
         let day = '';
         let time = '';
@@ -96,7 +96,7 @@ async function getBookingsForUser(userId){
 
 async function deleteBookingForUser(bookingId, userId){
   if(process.env.USE_MOCK === '1'){
-    const idx = mock.bookings.findIndex(b=>b.id === bookingId && b.memberId === userId);
+    const idx = mock.bookings.findIndex(b => String(b.id) === String(bookingId) && String(b.memberId) === String(userId));
     if(idx === -1) throw new Error('Booking not found');
     mock.bookings.splice(idx,1);
     return { deleted: true };

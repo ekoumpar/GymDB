@@ -6,14 +6,22 @@ const mock = require('../utils/mockData');
 
 async function registerUser(username, password, details = {}){
   if(process.env.USE_MOCK === '1'){
-    // generate sequential mock member id like 'm3' by finding max existing numeric suffix
+    // generate sequential mock member id: prefer numeric ids when existing ids are numeric
     let maxNum = 0;
+    let hasNumeric = false;
     mock.members.forEach(m => {
-      const match = String(m.id || '').match(/m(\d+)$/i);
-      if(match){ const n = parseInt(match[1],10); if(!isNaN(n) && n>maxNum) maxNum = n; }
+      const s = String(m.id || '');
+      if(/^[0-9]+$/.test(s)){
+        hasNumeric = true;
+        const n = parseInt(s,10);
+        if(!isNaN(n) && n>maxNum) maxNum = n;
+      } else {
+        const match = s.match(/m(\d+)$/i);
+        if(match){ const n = parseInt(match[1],10); if(!isNaN(n) && n>maxNum) maxNum = n; }
+      }
     });
-    const next = maxNum + 1 || 1;
-    const id = `m${next}`;
+    const next = (maxNum || 0) + 1;
+    const id = hasNumeric ? next : `m${next}`;
     const user = { id, name: username, password, dateOfBirth: details.dateOfBirth || '2000-01-01', sex: details.sex || 'M', phoneNumber: details.phoneNumber || '', height: details.height || 0, weight: details.weight || 0 };
     mock.members.push(user);
     return { id, username };
@@ -32,7 +40,7 @@ async function loginUser(username, password){
   if(process.env.USE_MOCK === '1'){
     // login by name against mock.members
     const lookup = String(username || '').toLowerCase();
-    const user = mock.members.find(u => (u.name && u.name.toLowerCase() === lookup) || u.id === username);
+    const user = mock.members.find(u => (u.name && u.name.toLowerCase() === lookup) || String(u.id) === String(username));
     if(!user) throw new Error('Invalid credentials');
     if(user.password && user.password !== password) throw new Error('Invalid credentials');
     return { id: user.id, username: user.name, name: user.name, dateOfBirth: user.dateOfBirth, sex: user.sex, phoneNumber: user.phoneNumber, height: user.height, weight: user.weight };

@@ -18,8 +18,8 @@ async function registerMemberToClass(member_id, classInfo){
 
     // if class_id provided, find class entry
     if(class_id){
-      const c = mock.classes.find(x => x.id === class_id);
-      if(c) workout = c.name;
+      const c = mock.classes.find(x => String(x.id) === String(class_id) || (x.name && String(x.name).toLowerCase() === String(class_id).toLowerCase()));
+      if(c) workout = c.name || c.workout_type || c.name;
     }
 
     if(!workout && !class_id) throw new Error('No matching reservation found');
@@ -33,7 +33,7 @@ async function registerMemberToClass(member_id, classInfo){
     if(!day || !time) throw new Error('Provide workout+day+time when using mock mode');
 
     // check already reserved
-    const exists = mock.bookings.find(b => b.memberId === member_id && (b.className === workout || b.className === (class_id || null)) && (() => {
+    const exists = mock.bookings.find(b => String(b.memberId) === String(member_id) && (b.className === workout || b.className === (class_id || null)) && (() => {
       try{ const d = new Date(b.date); return d.getUTCDay() === (['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].indexOf(day)); }catch(e){ return false; }
     })());
     if(exists) return { table: 'memberreserves', reservation_id: exists.id, warning: 'already_reserved' };
@@ -61,9 +61,9 @@ async function registerMemberToClass(member_id, classInfo){
 
     // find trainer from schedule or classes
     let trainer = null;
-    const sch = mock.schedule.find(s => (s.name && s.name.toLowerCase() === String(workout||'').toLowerCase() && s.day === day && s.time === time) || (s.workout_type && s.workout_type.toLowerCase() === String(workout||'').toLowerCase() && s.day === day && s.time === time));
+    const sch = mock.schedule.find(s => ((s.name && s.name.toLowerCase() === String(workout||'').toLowerCase()) || (s.workout_type && s.workout_type.toLowerCase() === String(workout||'').toLowerCase())) && s.day === day && s.time === time);
     if(sch) trainer = sch.trainer_name || sch.trainer;
-    if(!trainer){ const cl = mock.classes.find(c => c.name && c.name.toLowerCase() === String(workout||'').toLowerCase()); if(cl) trainer = cl.trainer; }
+    if(!trainer){ const cl = mock.classes.find(c => c.name && c.name.toLowerCase() === String(workout||'').toLowerCase()); if(cl) trainer = cl.trainer || cl.trainerId || null; }
 
     const bookingId = `b${newId}`;
     const b = { id: bookingId, memberId: member_id, classId: class_id || null, className: workout, trainer: trainer, date: dateISO, location: 'Mock Hall' };
