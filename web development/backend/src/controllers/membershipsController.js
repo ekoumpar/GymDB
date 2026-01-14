@@ -1,3 +1,7 @@
+/**
+ * Memberships controller — retrieve membership plans via
+ * `membershipsService`, return `ok` responses, and forward errors.
+ */
 const membershipsService = require('../services/membershipsService');
 const { ok } = require('../utils/responses');
 

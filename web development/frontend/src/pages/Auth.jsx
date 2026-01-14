@@ -1,9 +1,12 @@
+// Auth page: login/signup UI with client-side validation; calls `login`/`signup` APIs
+// and stores user/token in localStorage before navigating to the profile.
 import React, { useState } from 'react';
 import CustomSelect from '../components/CustomSelect';
 import { useNavigate } from 'react-router-dom';
 import { login, signup } from '../api/api';
 
 function validatePassword(p){
+  // Password rules: minimum length, requires a digit and an uppercase letter
   if(!p || p.length < 8) return 'Password must be at least 8 characters.';
   if(!/[0-9]/.test(p)) return 'Password must contain at least one digit.';
   if(!/[A-Z]/.test(p)) return 'Password should include an uppercase letter.';
@@ -40,6 +43,7 @@ export default function Auth({ onLogin }){
   }, []);
 
   const handleSubmit = async (e)=>{
+    // Main submit handler: handles both signup and login flows
     e.preventDefault();
     setError(null);
     if(mode === 'signup'){
@@ -109,6 +113,7 @@ export default function Auth({ onLogin }){
         <button className={`tab ${mode==='signup'? 'tab--active':''}`} onClick={()=>switchTo('signup')} type="button">Sign up</button>
       </div>
 
+      {/* Form toggles between login and signup; signup collects extra fields */}
       <form onSubmit={handleSubmit} autoComplete="off">
         {/* Hidden fields to capture browser autofill and prevent it from filling visible inputs */}
         <input type="text" name="__username_hint" autoComplete="username" style={{ display: 'none' }} aria-hidden="true" />

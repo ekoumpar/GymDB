@@ -1,3 +1,7 @@
+/**
+ * Members controller — list and create members by delegating to
+ * `membersService`, returning standardized responses and forwarding errors.
+ */
 const membersService = require('../services/membersService');
 const { ok, _ } = require('../utils/responses');
 

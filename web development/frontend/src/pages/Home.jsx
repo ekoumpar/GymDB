@@ -1,3 +1,4 @@
+// Home page: marketing hero, CTAs and feature highlights; links to auth/profile.
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +11,7 @@ const img3 = '/assets/images/facilities.jpg';
 export default function Home({ user }){
   return (
     <>
+      {/* Hero: main marketing CTA with conditional links based on auth state */}
       <section className="hero hero-strong" style={{backgroundImage:`linear-gradient(rgba(5,5,8,0.6), rgba(5,5,8,0.25)), url(${heroImage})`}}>
         <div className="hero-inner">
           <h1 className="hero-title">Train Smarter. Live Stronger.</h1>
@@ -27,6 +29,7 @@ export default function Home({ user }){
         </div>
       </section>
 
+      {/* Feature cards: visual highlights of services offered */}
       <section className="section--cards">
         <div className="container">
           <h2>What we offer</h2>

@@ -1,3 +1,5 @@
+// Classes page: fetches available classes, renders cards, and handles booking
+// actions (requires authentication) and navigation to schedule details.
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchClasses } from '../api/api';
@@ -18,6 +20,14 @@ export default function Classes(){
     })();
     return ()=>mounted=false;
   },[]);
+
+  const handleBook = async (id)=>{
+    if(!user){ showToast('Please login to book classes', { type: 'info' }); return; }
+    try{
+      await bookClass(id);
+      showToast('Booked — check your profile', { type: 'success' });
+    }catch(e){ showToast('Booking failed', { type: 'error' }); }
+  }
 
   if(loading) return <p>Loading classes…</p>;
 

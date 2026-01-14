@@ -1,3 +1,4 @@
+// Login page: simple credential form that calls `login` API and triggers `onLogin`.
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/api';
@@ -9,6 +10,7 @@ export default function Login({ onLogin }){
   const navigate = useNavigate();
 
   const handleSubmit = async (e)=>{
+    // Submit handler: call `login` API and invoke `onLogin` on success
     e.preventDefault();
     if(!username || !password){ setError('Fill both fields'); return; }
     try{

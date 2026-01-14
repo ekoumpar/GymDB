@@ -1,3 +1,4 @@
+// Membership page: loads membership plans via API and displays plan cards.
 import React, { useEffect, useState } from 'react';
 import { fetchMemberships } from '../api/api';
 
@@ -18,6 +19,8 @@ export default function Membership(){
     })();
     return ()=> mounted = false;
   },[]);
+
+  // Render membership plan cards once loaded
 
   return (
     <section className="page container">

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+// CustomSelect: accessible dropdown rendered in a portal. Handles keyboard
+// navigation, positions the list relative to the button, and returns selected value.
 export default function CustomSelect({ value, onChange, options = [], id, ariaLabel, placeholder = 'Select' }){
   const [open, setOpen] = useState(false);
   const [listStyle, setListStyle] = useState(null);
@@ -59,6 +61,7 @@ export default function CustomSelect({ value, onChange, options = [], id, ariaLa
 
   return (
     <div className="custom-select" id={id}>
+      {/* Button opens the listbox; uses ARIA attributes for accessibility */}
       <button
         type="button"
         ref={buttonRef}

@@ -1,3 +1,5 @@
+// Trainers page: lists available trainers fetched from API with brief profile
+// cards and social links.
 import React, { useEffect, useState } from 'react';
 import { fetchTrainers } from '../api/api';
 
@@ -18,6 +20,8 @@ export default function Trainers(){
     })();
     return ()=> mounted = false;
   },[]);
+
+  // Render trainer cards with basic info and social links
 
   return (
     <section className="page container">

@@ -1,3 +1,5 @@
+// Profile page: shows user details and their bookings; supports booking
+// cancellation and uses `fetchUserBookings`/`cancelBooking` APIs.
 import React, { useEffect, useState } from 'react';
 import { fetchUserBookings } from '../api/api';
 
@@ -12,6 +14,12 @@ export default function Profile({ user }){
     })();
     return ()=> mounted = false;
   },[]);
+
+  const handleCancel = async (id)=>{
+    if(!confirm('Cancel booking?')) return;
+    await cancelBooking(id);
+    setBookings(b => b.filter(x => x.id !== id));
+  };
 
   // Get user data from localStorage (use app's canonical `gymdb_user` key)
   const userData = user || JSON.parse(localStorage.getItem('gymdb_user') || '{}');

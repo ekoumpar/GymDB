@@ -1,6 +1,9 @@
+// Members service: data access for member records (DB or mock).
+// Performs light input sanitization and returns service-level results.
 const pool = require('../config/database');
 const mock = require('../utils/mockData');
 
+// Return a list of members. Uses mock data when `USE_MOCK=1`.
 async function getMembers(limit = 200){
   if(process.env.USE_MOCK === '1'){
     return mock.members.slice(0, limit).map(m => {
@@ -15,6 +18,7 @@ async function getMembers(limit = 200){
   });
 }
 
+// Insert a new member. Supports mock insertion when `USE_MOCK=1`.
 async function addMember(data){
   if(process.env.USE_MOCK === '1'){
     // generate sequential mock member id
@@ -37,6 +41,7 @@ async function addMember(data){
     mock.members.push(member);
     return { insertId: id };
   }
+  // Only allow safe column names to avoid injection via field names
   const keys = Object.keys(data).filter(k=>/^[A-Za-z0-9_]+$/.test(k));
   if (!keys.length) throw new Error('No valid fields provided');
   const cols = keys.map(k=>`\`${k}\``).join(',');

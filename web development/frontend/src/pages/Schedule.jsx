@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { fetchSchedule, bookClass } from '../api/api';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { showToast } from '../utils/toast';
@@ -99,6 +99,7 @@ export default function Schedule(){
           }
         } else if(err && err.message) msg = err.message;
       }catch(e){ msg = 'Booking failed'; }
+      // Provide user-facing error feedback when booking fails
       showToast(msg, { type: 'error' });
       console.error('bookClass error', err);
     }
