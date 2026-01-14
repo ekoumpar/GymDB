@@ -16,13 +16,13 @@ app.use(logger);
 // API routes
 app.use('/api', api);
 
-// Serve frontend static files from the top-level `frontend` folder so the site is available at the same host.
-const frontendPath = path.join(__dirname, '..', '..', 'frontend');
+// Serve frontend static files from the top-level `frontend/public` folder so the site is available at the same host.
+const frontendPath = path.join(__dirname, '..', '..', 'frontend', 'public');
 app.use(express.static(frontendPath));
 
 // Serve the homepage at `/`
 app.get('/', (_, res) => {
-  res.sendFile(path.join(frontendPath, 'home.html'));
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // SPA fallback: send index.html for non-API routes (app entry)
